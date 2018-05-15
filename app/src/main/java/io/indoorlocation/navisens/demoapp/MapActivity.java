@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -51,7 +50,7 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
 
-                mapwizePlugin = new MapwizePlugin(mapView, mapboxMap, new MapOptions());
+                mapwizePlugin = new MapwizePlugin(mapView, new MapOptions());
                 startLocationService();
 
                 mapwizePlugin.setOnMapClickListener(new MapwizePlugin.OnMapClickListener() {
