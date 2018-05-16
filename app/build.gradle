@@ -35,7 +35,7 @@ dependencies {
     }
 
 
-    implementation group: "com.navisens", name: "motiondnaapi", version: "1.2.0-SNAPSHOT", changing: true
+    implementation group: "com.navisens", name: "motiondnaapi", version: "1.4.0", changing: true
     implementation 'org.altbeacon:android-beacon-library:2.+'
 
     implementation 'com.github.IndoorLocation:manual-indoor-location-provider-android:1.0.0'
