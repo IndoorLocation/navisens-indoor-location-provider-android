@@ -1,23 +1,34 @@
-# navisens-indoor-location-provider-android
-Provider based on MotionDNA SDK from Navisens. Locate your phone using the built-in gyroscope and accelerometer.
+# Navisens IndoorLocation Provider for Android
+
+IndoorLocation Provider using MotionDNA SDK from [Navisens](https://www.navisens.com). Track phone motion using the built-in accelerometers and gyroscopes.
+
+From the moment that you have an initial position provided by another provider (QR-Code, iBeacon, Wifi, ... ), you can use this provider to extrapolate the position based on the phone mouvements.
+
+This provider needs to subscribe to a source IndoorLocation provider. Each time the source provider sends a new location, the Navisens provider is reset and will restart from that position to give position updates based on motion.
+
+To use this module, sign up and get your developer key at [https://www.navisens.com]().
 
 ## Use
 
-Instantiate the provider with an IndoorLocationProvider as source provider and your Navisens Developper Key. Navisens provider is able to lock onto each updates of the source provider.
-Get your dev key on: https://www.navisens.com
+Instantiate the provider with an IndoorLocationProvider as source provider and your Navisens Developper Key.
 ```
-ILNavisensProvider = new IndoorLocationProviderNavisens(ILManualProvider);
+NavisensIndoorLocationProvider navisensIndoorLocationProvider = new NavisensIndoorLocationProvider(getApplicationContext(), sourceIndoorLocationProvider, "<YOUR NAVISENS KEY>");
 ```
 
 Set the provider in your Mapwize SDK:
-
 ```
-mapwizePlugin.setLocationProvider(ILNavisensProvider);     
+mapwizePlugin.setLocationProvider(navisensIndoorLocationProvider);     
 ```
 
-## Demo
+## Demo app
 
-Tap on the screen to set your location.
+A simple demo application to test the provider is available in the /app directory.
+
+You will need to set your credentials in NavisensIndoorLocationProviderDemoApplication and MapActivity.
+
+A sample key is provided for Mapwize. Please note that this keys can only be used for testing purposes, with very limited traffic, and cannot be used in production. Get your own key from [mapwize.io](https://www.mapwize.io). Free accounts are available.
+
+To initialize the position, simply click on the map. The move around and see the position moving.
 
 ## Contribute
 

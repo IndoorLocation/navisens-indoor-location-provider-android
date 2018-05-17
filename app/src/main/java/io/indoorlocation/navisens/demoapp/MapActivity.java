@@ -40,7 +40,7 @@ public class MapActivity extends AppCompatActivity {
 
         final IndoorLocationProvider manualIndoorLocationProvider = new ManualIndoorLocationProvider();
 
-        navisensIndoorLocationProvider = new NavisensIndoorLocationProvider(getApplicationContext(), manualIndoorLocationProvider,"uu6oF6dDdNsIBWBez4pw2GuMwNWGJlLpRjVjsa4c23XrT8wqT7BKnXS7WuWSyPfc");
+        navisensIndoorLocationProvider = new NavisensIndoorLocationProvider(getApplicationContext(), manualIndoorLocationProvider,"<YOUR NAVISENS KEY>");
 
 
         MapOptions opts = new MapOptions.Builder().build();
