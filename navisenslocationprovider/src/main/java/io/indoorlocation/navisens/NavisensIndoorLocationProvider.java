@@ -15,7 +15,7 @@ import io.indoorlocation.core.IndoorLocationProviderListener;
 
 public class NavisensIndoorLocationProvider extends IndoorLocationProvider implements MotionDnaInterface, IndoorLocationProviderListener {
 
-    private boolean mIsStarted = false;
+    private boolean mStarted = false;
 
     private MotionDnaApplication mMotionDna;
     private Context mContext;
@@ -23,17 +23,13 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
     private String mNavisensKey;
     private IndoorLocationProvider mSourceProvider;
 
-    public NavisensIndoorLocationProvider(Context context, IndoorLocationProvider sourceProvider, String navisensDevKey) {
+    public NavisensIndoorLocationProvider(Context context, IndoorLocationProvider sourceProvider, String navisensKey) {
         super();
-
         mContext = context;
-
         mMotionDna = new MotionDnaApplication(this);
-
         mSourceProvider = sourceProvider;
         mSourceProvider.addListener(this);
-
-        mNavisensKey = navisensDevKey;
+        mNavisensKey = navisensKey;
     }
 
     @Override
@@ -43,48 +39,42 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
 
     @Override
     public void start() {
-        if (!mIsStarted) {
-            mIsStarted = true;
-
+        if (!mStarted) {
+            mStarted = true;
             mMotionDna.setCallbackUpdateRateInMs(1000);
             mMotionDna.setPowerMode(MotionDna.PowerConsumptionMode.PERFORMANCE);
-
             mMotionDna.runMotionDna(mNavisensKey);
-
         }
     }
 
     @Override
     public void stop() {
-        if (mIsStarted) {
-            mIsStarted = false;
+        if (mStarted) {
+            mStarted = false;
+            mMotionDna.stop();
         }
     }
 
     @Override
     public boolean isStarted() {
-        return mIsStarted;
+        return mStarted;
     }
 
     @Override
     public void receiveMotionDna(MotionDna motionDna) {
-
         MotionDna.Location location = motionDna.getLocation();
-
         IndoorLocation indoorLocation = new IndoorLocation(getName(), location.globalLocation.latitude, location.globalLocation.longitude, mCurrentFloor, System.currentTimeMillis());
-
         dispatchIndoorLocationChange(indoorLocation);
-
     }
 
     @Override
     public void receiveNetworkData(MotionDna motionDna) {
-        throw new UnsupportedOperationException("Method not implemented");
+
     }
 
     @Override
     public void receiveNetworkData(MotionDna.NetworkCode networkCode, Map<String, ?> map) {
-        throw new UnsupportedOperationException("Method not implemented");
+
     }
 
     @Override
@@ -119,11 +109,8 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
 
     @Override
     public void onIndoorLocationChange(IndoorLocation indoorLocation) {
-
         dispatchIndoorLocationChange(indoorLocation);
-
         mCurrentFloor = indoorLocation.getFloor();
-
         mMotionDna.setLocationLatitudeLongitude(indoorLocation.getLatitude(), indoorLocation.getLongitude());
         mMotionDna.setHeadingMagInDegrees();
     }
