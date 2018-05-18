@@ -41,9 +41,9 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
     public void start() {
         if (!mStarted) {
             mStarted = true;
+            mMotionDna.runMotionDna(mNavisensKey);
             mMotionDna.setCallbackUpdateRateInMs(1000);
             mMotionDna.setPowerMode(MotionDna.PowerConsumptionMode.PERFORMANCE);
-            mMotionDna.runMotionDna(mNavisensKey);
         }
     }
 
