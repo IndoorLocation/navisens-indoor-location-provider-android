@@ -64,7 +64,8 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
     public void receiveMotionDna(MotionDna motionDna) {
         MotionDna.Location location = motionDna.getLocation();
         IndoorLocation indoorLocation = new IndoorLocation(getName(), location.globalLocation.latitude, location.globalLocation.longitude, mCurrentFloor, System.currentTimeMillis());
-        dispatchIndoorLocationChange(indoorLocation);
+        if (indoorLocation.getLatitude() != 0 && indoorLocation.getLongitude() != 0)
+            dispatchIndoorLocationChange(indoorLocation);
     }
 
     @Override
