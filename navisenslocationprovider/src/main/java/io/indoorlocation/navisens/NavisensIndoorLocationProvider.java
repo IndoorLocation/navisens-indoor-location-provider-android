@@ -2,6 +2,7 @@ package io.indoorlocation.navisens;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import com.navisens.motiondnaapi.MotionDna;
 import com.navisens.motiondnaapi.MotionDnaApplication;
@@ -22,11 +23,11 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
     private Double mCurrentFloor = null;
     private String mNavisensKey;
     private IndoorLocationProvider mSourceProvider;
+    public LocationListener locationListener;
 
     public NavisensIndoorLocationProvider(Context context, IndoorLocationProvider sourceProvider, String navisensKey) {
         super();
         mContext = context;
-        mMotionDna = new MotionDnaApplication(this);
         mSourceProvider = sourceProvider;
         mSourceProvider.addListener(this);
         mNavisensKey = navisensKey;
@@ -40,10 +41,22 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
     @Override
     public void start() {
         if (!mStarted) {
+            mMotionDna = new MotionDnaApplication(this);
             mStarted = true;
             mMotionDna.runMotionDna(mNavisensKey);
             mMotionDna.setCallbackUpdateRateInMs(1000);
             mMotionDna.setPowerMode(MotionDna.PowerConsumptionMode.PERFORMANCE);
+        }
+    }
+
+    public void start(MotionDnaApplication motionDna) {
+        if (!mStarted) {
+            mMotionDna = motionDna;
+            mStarted = true;
+            mMotionDna.runMotionDna(mNavisensKey);
+            mMotionDna.setCallbackUpdateRateInMs(1000);
+            mMotionDna.setPowerMode(MotionDna.PowerConsumptionMode.PERFORMANCE);
+            Log.d("start", "coucou");
         }
     }
 
@@ -62,10 +75,17 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
 
     @Override
     public void receiveMotionDna(MotionDna motionDna) {
+        Log.d("receiveMotionDna", "coucou");
         MotionDna.Location location = motionDna.getLocation();
+
+        if (mCurrentFloor == null || location.floor != mCurrentFloor) {
+            mCurrentFloor = (double)location.floor;
+        }
+
         IndoorLocation indoorLocation = new IndoorLocation(getName(), location.globalLocation.latitude, location.globalLocation.longitude, mCurrentFloor, System.currentTimeMillis());
         if (indoorLocation.getLatitude() != 0 && indoorLocation.getLongitude() != 0)
             dispatchIndoorLocationChange(indoorLocation);
+        locationListener.onLocationChange(location);
     }
 
     @Override
@@ -114,5 +134,6 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
         mCurrentFloor = indoorLocation.getFloor();
         mMotionDna.setLocationLatitudeLongitude(indoorLocation.getLatitude(), indoorLocation.getLongitude());
         mMotionDna.setHeadingMagInDegrees();
+        mMotionDna.setFloorNumber(mCurrentFloor.intValue());
     }
 }

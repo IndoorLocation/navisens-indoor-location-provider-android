@@ -8,26 +8,38 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.navisens.motiondnaapi.MotionDna;
 import com.navisens.motiondnaapi.MotionDnaApplication;
+
+import org.w3c.dom.Text;
 
 import io.indoorlocation.core.IndoorLocation;
 import io.indoorlocation.core.IndoorLocationProvider;
 import io.indoorlocation.manual.ManualIndoorLocationProvider;
+import io.indoorlocation.navisens.LocationListener;
 import io.indoorlocation.navisens.NavisensIndoorLocationProvider;
 import io.mapwize.mapwizeformapbox.AccountManager;
 import io.mapwize.mapwizeformapbox.MapOptions;
 import io.mapwize.mapwizeformapbox.MapwizePlugin;
 import io.mapwize.mapwizeformapbox.model.LatLngFloor;
 
-public class MapActivity extends AppCompatActivity {
+import static com.navisens.motiondnaapi.MotionDna.VerticalMotionStatus.VERTICAL_STATUS_LEVEL_GROUND;
+
+public class MapActivity extends AppCompatActivity implements LocationListener { // LocationListener to retrieve each location updates
 
     private MapView mapView;
     private MapwizePlugin mapwizePlugin;
     private NavisensIndoorLocationProvider navisensIndoorLocationProvider;
     private static final int REQUEST_MDNA_PERMISSIONS = 1;
+
+    private MotionDnaApplication motionDna;
+
+    private double lastLocationFloor;
 
 
     @Override
@@ -43,7 +55,7 @@ public class MapActivity extends AppCompatActivity {
 
         final IndoorLocationProvider manualIndoorLocationProvider = new ManualIndoorLocationProvider();
 
-        navisensIndoorLocationProvider = new NavisensIndoorLocationProvider(getApplicationContext(), manualIndoorLocationProvider,"<YOUR NAVISENS KEY>");
+        navisensIndoorLocationProvider = new NavisensIndoorLocationProvider(getApplicationContext(), manualIndoorLocationProvider,"uu6oF6dDdNsIBWBez4pw2GuMwNWGJlLpRjVjsa4c23XrT8wqT7BKnXS7WuWSyPfc");
 
 
         MapOptions opts = new MapOptions.Builder().build();
@@ -71,7 +83,12 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setupLocationProvider() {
+        motionDna = new MotionDnaApplication(navisensIndoorLocationProvider);
+        navisensIndoorLocationProvider.locationListener = this;
+        navisensIndoorLocationProvider.start(motionDna);
         navisensIndoorLocationProvider.start();
+        motionDna.setAverageFloorHeight(4.8);
+
         mapwizePlugin.setLocationProvider(navisensIndoorLocationProvider);
     }
 
@@ -95,6 +112,49 @@ public class MapActivity extends AppCompatActivity {
         else {
             setupLocationProvider();
         }
+    }
+
+    @Override
+    public void onLocationChange(MotionDna.Location location) {
+        Log.d("MapActivity", "coucou");
+        TextView logLocation = findViewById(R.id.logLocation);
+        String vMotion;
+
+        switch (location.verticalMotionStatus) {
+            case VERTICAL_STATUS_LEVEL_GROUND:
+                vMotion = "VERTICAL_STATUS_LEVEL_GROUND";
+                break;
+            case VERTICAL_STATUS_ESCALATOR_UP:
+                vMotion = "VERTICAL_STATUS_ESCALATOR_UP";
+                break;
+            case VERTICAL_STATUS_ESCALATOR_DOWN:
+                vMotion = "VERTICAL_STATUS_ESCALATOR_DOWN";
+                break;
+            case VERTICAL_STATUS_ELEVATOR_UP:
+                vMotion = "VERTICAL_STATUS_ELEVATOR_UP";
+                break;
+            case VERTICAL_STATUS_ELEVATOR_DOWN:
+                vMotion = "VERTICAL_STATUS_ELEVATOR_DOWN";
+                break;
+            case VERTICAL_STATUS_STAIRS_UP:
+                vMotion = "VERTICAL_STATUS_STAIRS_UP";
+                break;
+            case VERTICAL_STATUS_STAIRS_DOWN:
+                vMotion = "VERTICAL_STATUS_STAIRS_DOWN";
+                break;
+            default:
+                vMotion = "NO";
+        }
+
+        String txt = "floor " + location.floor + "\nmotion: " + vMotion + "\naltitude: " + location.absoluteAltitude;
+
+        logLocation.setText(txt);
+
+
+        if (lastLocationFloor != location.floor) {
+            mapwizePlugin.setFloor((double)location.floor);
+        }
+        lastLocationFloor = location.floor;
     }
 
     @Override
@@ -138,4 +198,5 @@ public class MapActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
+
 }
