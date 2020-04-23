@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DemoApp.iml" filepath="$PROJECT_DIR$/DemoApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/navisens-indoor-location-provider-android.iml" filepath="$PROJECT_DIR$/navisens-indoor-location-provider-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/navisenslocationprovider/navisenslocationprovider.iml" filepath="$PROJECT_DIR$/navisenslocationprovider/navisenslocationprovider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/navisensindoorlocationprovider/navisensindoorlocationprovider.iml" filepath="$PROJECT_DIR$/navisensindoorlocationprovider/navisensindoorlocationprovider.iml" />
     </modules>
   </component>
 </project>

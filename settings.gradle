@@ -1,1 +1,2 @@
-include ':app', ':navisenslocationprovider'
+include ':app', ':navisensindoorlocationprovider'
+rootProject.name='DemoApp'

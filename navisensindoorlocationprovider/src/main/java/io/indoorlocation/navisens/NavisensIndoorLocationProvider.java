@@ -90,6 +90,7 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
             mMotionDna.runMotionDna(mNavisensKey);
             mMotionDna.setCallbackUpdateRateInMs(mUpdateRate);
             mMotionDna.setPowerMode(mPowerMode);
+            Log.i("Debug", "Start");
         }
     }
 
@@ -112,6 +113,7 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
         mCurrentFloor = (double)location.floor;
         IndoorLocation indoorLocation = new IndoorLocation(getName(), location.globalLocation.latitude, location.globalLocation.longitude, mCurrentFloor, System.currentTimeMillis());
         dispatchIndoorLocationChange(indoorLocation);
+        Log.i("Debug", "Receive motion dna + dispatch");
     }
 
     @Override
@@ -126,6 +128,7 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
 
     @Override
     public void reportError(MotionDna.ErrorCode errorCode, String s) {
+        Log.i("Debug", "Error " + s);
         this.dispatchOnProviderError(new Error(errorCode.toString() + " " + s));
     }
 
@@ -151,7 +154,7 @@ public class NavisensIndoorLocationProvider extends IndoorLocationProvider imple
 
     @Override
     public void onProviderError(Error error) {
-       dispatchOnProviderError(error);
+        dispatchOnProviderError(error);
     }
 
     @Override
